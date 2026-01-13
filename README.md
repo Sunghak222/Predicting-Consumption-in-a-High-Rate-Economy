@@ -109,7 +109,7 @@ This suggests that macro variables explain average consumption behavior, but not
 ---
 
 ## 7. Visualization
-
+![Output](./img/output.png)
 A comparison of actual and predicted consumption growth shows that:
 - Predictions remain smooth during normal periods
 - The model fails to capture extreme drops and rebounds during COVID-19
