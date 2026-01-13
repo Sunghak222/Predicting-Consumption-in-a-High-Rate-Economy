@@ -2,8 +2,6 @@
 
 ## 1. Research Question
 
-This project asks a simple question:
-
 **Do macroeconomic conditions such as interest rates, inflation, and unemployment explain short-term changes in U.S. consumption?**
 
 Instead of trying to build a highly accurate prediction model, the goal is to understand whether commonly used macro indicators contain meaningful information about short-term consumption growth.
@@ -63,7 +61,7 @@ Because this is a rolling growth measure, large shocks affect multiple adjacent 
 
 ## 4. Methodology
 
-A **Ridge regression** model is used.
+A Ridge regression model is used.
 
 The model includes:
 - Lagged macroeconomic variables
@@ -87,7 +85,7 @@ Model performance is evaluated in two ways:
 1. **Including the COVID-19 period**  
    → reflects real-world performance
 
-2. **Excluding the COVID-19 period (adjusted)**  
+2. **Excluding the COVID-19 period**  
    → December 2019 to June 2021 is removed  
    → adjusted to match the 3-month growth definition
 
@@ -97,8 +95,13 @@ This separation helps distinguish normal economic behavior from crisis-driven sh
 
 ## 6. Results
 
+| Evaluation Setting | RMSE  | R²      |
+|--------------------|-------|---------|
+| With COVID-19      | 0.0353| -0.0124 |
+| Excluding COVID-19 | 0.0066| -1.6999 |
+
 - When the COVID-19 period is included, prediction errors increase significantly.
-- After excluding COVID-19, the RMSE decreases, indicating better average accuracy.
+- After excluding COVID-19, the RMSE decreases, meaning better average accuracy.
 - However, R² becomes unstable or strongly negative because consumption growth varies very little during normal periods.
 
 This suggests that macro variables explain average consumption behavior, but not short-term fluctuations.
