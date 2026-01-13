@@ -1,20 +1,20 @@
-# Does a High Interest Rate Suppress Consumption Growth?
+# Does a High Interest Rate Environment Suppress Consumption Growth?
 
 ## 1. Research Question
 
-This project investigates the following question:
+This project asks a simple question:
 
-**Do standard macroeconomic conditions explain short-term fluctuations in U.S. consumption, particularly under high-interest-rate environments?**
+**Do macroeconomic conditions such as interest rates, inflation, and unemployment explain short-term changes in U.S. consumption?**
 
-Rather than maximizing predictive accuracy, the goal is to examine whether commonly used macro indicators—such as interest rates, inflation, unemployment, and income—contain explanatory power for short-term consumption growth.
+Instead of trying to build a highly accurate prediction model, the goal is to understand whether commonly used macro indicators contain meaningful information about short-term consumption growth.
 
 ---
 
 ## 2. Data
 
-All data are sourced from the Federal Reserve Economic Data (FRED) database and are observed at a monthly frequency.
+All data are monthly U.S. macroeconomic series obtained from FRED.
 
-**Variables used:**
+The following variables are used:
 
 - **PCEC96**  
   Real Personal Consumption Expenditures  
@@ -22,14 +22,14 @@ All data are sourced from the Federal Reserve Economic Data (FRED) database and 
 
 - **FEDFUNDS**  
   Federal Funds Effective Rate  
-  → Monetary policy stance
+  → Represents the interest rate environment
 
 - **CPIAUCSL**  
   Headline Consumer Price Index  
-  → Overall inflation pressure
+  → Overall inflation
 
 - **CPILFESL**  
-  Core Consumer Price Index (excluding food and energy)  
+  Core CPI (excluding food and energy)  
   → Persistent inflation component
 
 - **UNRATE**  
@@ -38,108 +38,96 @@ All data are sourced from the Federal Reserve Economic Data (FRED) database and 
 
 - **DSPIC96**  
   Real Disposable Personal Income  
-  → Household purchasing power
+  → Household income after taxes
 
-The sample period begins in 2007 and extends through 2025, subject to data availability after lag construction.
+The sample starts in 2007 and extends to 2025, depending on data availability after lag construction.
 
 ---
 
-## 3. Target Variable Construction
+## 3. Target Variable
 
-The target variable is defined as the **3-month log growth rate of real personal consumption expenditures**:
+The target variable is defined as the **3-month log growth rate of real consumption**:
 
 \[
 y_t = \log(PCE_t) - \log(PCE_{t-3})
 \]
 
-**Why 3-month growth?**
-- Reduces high-frequency monthly noise
-- Reflects short-term economic dynamics more meaningfully than 1-month changes
-- Allows limited lag for policy and labor market effects to materialize
+This definition is used because:
+- Monthly consumption data is noisy
+- A 3-month window smooths short-term fluctuations
+- Policy and labor market effects often take time to appear
 
-Because this is a rolling growth measure, large shocks mechanically affect multiple adjacent observations.
+Because this is a rolling growth measure, large shocks affect multiple adjacent observations.
 
 ---
 
 ## 4. Methodology
 
-A **Ridge regression** model is employed to analyze the structural relationship between macroeconomic variables and consumption growth.
+A **Ridge regression** model is used.
 
-Key design choices:
-- Lagged macro variables are used to respect temporal ordering
-- Features are standardized using `StandardScaler`
-- Regularization (Ridge) mitigates multicollinearity common in macro data
+The model includes:
+- Lagged macroeconomic variables
+- Standardization using `StandardScaler`
+- L2 regularization to handle multicollinearity
 
-This model is intentionally simple to preserve interpretability.  
-The objective is **explanatory analysis**, not black-box forecasting.
+This model is chosen for its simplicity and interpretability.  
+The purpose is to examine relationships, not to build a black-box forecasting system.
 
 ---
 
 ## 5. Evaluation Strategy
 
-The dataset is split by time to avoid data leakage:
+The data is split by time:
 
-- **Training set:** pre-2020
-- **Test set:** 2020 onward
+- **Training set:** data before 2020  
+- **Test set:** data from 2020 onward
 
-To account for the COVID-19 shock, performance is evaluated under two test settings:
+Model performance is evaluated in two ways:
 
-1. **With COVID-19**  
-   → Full test period
+1. **Including the COVID-19 period**  
+   → reflects real-world performance
 
-2. **Without COVID-19 (adjusted)**  
-   → December 2019 to June 2021 excluded  
-   (Adjusted to reflect the 3-month growth window)
+2. **Excluding the COVID-19 period (adjusted)**  
+   → December 2019 to June 2021 is removed  
+   → adjusted to match the 3-month growth definition
 
-This separation allows the analysis to distinguish between normal economic dynamics and exogenous crisis shocks.
+This separation helps distinguish normal economic behavior from crisis-driven shocks.
 
 ---
 
 ## 6. Results
 
-### Quantitative Findings
-- RMSE improves after excluding the COVID-19 period, indicating better absolute prediction accuracy during normal times.
-- R² becomes unstable or strongly negative when COVID-19 is excluded, due to the extremely low variance of consumption growth in normal regimes.
+- When the COVID-19 period is included, prediction errors increase significantly.
+- After excluding COVID-19, the RMSE decreases, indicating better average accuracy.
+- However, R² becomes unstable or strongly negative because consumption growth varies very little during normal periods.
 
-This behavior is expected given the definition of R² and does not imply model failure.
-
-### Coefficient Interpretation
-- Interest rates and unemployment exert small but persistent negative effects on consumption growth.
-- Inflation variables exhibit weaker and less consistent relationships.
-- Disposable income changes contribute marginally at short horizons.
-
-Overall, macroeconomic variables explain **average consumption dynamics**, but not high-frequency fluctuations.
+This suggests that macro variables explain average consumption behavior, but not short-term fluctuations.
 
 ---
 
 ## 7. Visualization
 
-The figure below compares actual and predicted 3-month consumption growth over the full sample period.
+A comparison of actual and predicted consumption growth shows that:
+- Predictions remain smooth during normal periods
+- The model fails to capture extreme drops and rebounds during COVID-19
 
-Key observations:
-- During normal periods, predictions track a smooth average path.
-- During crisis periods (notably COVID-19), the model fails to react to sharp collapses and rebounds.
-
-This reflects the exogenous and policy-driven nature of the shock, which is not captured by standard macro indicators.
+This highlights the exogenous nature of the pandemic shock.
 
 ---
 
 ## 8. Limitations
 
-- The model cannot anticipate sudden behavioral or policy-driven shocks.
-- Short-term consumption growth exhibits very low variance during normal periods, limiting predictability.
-- The analysis relies solely on aggregate macroeconomic indicators and excludes micro-level consumption behavior.
+- The model cannot predict sudden policy or behavioral shocks.
+- Short-term consumption growth has very low variance in normal times.
+- Only aggregate macro variables are used; household-level behavior is not considered.
 
-These limitations are intrinsic to the research question and data structure.
+These limitations reflect the scope of the analysis rather than modeling errors.
 
 ---
 
 ## 9. Conclusion
 
-**Macroeconomic conditions influence the level of consumption,  
-but short-term consumption growth remains largely unpredictable outside of crisis periods.**
+Macroeconomic variables influence the overall level of consumption,  
+but short-term consumption growth is difficult to explain outside of crisis periods.
 
-This project highlights the limits of macro-based regression models in explaining short-run consumption dynamics, especially during periods of economic stability.
-
----
-
+This project shows both the usefulness and the limits of macro-based regression models.
